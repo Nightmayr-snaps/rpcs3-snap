@@ -1,14 +1,16 @@
 name: rpcs3-emu
 base: core20
-version: 'latest'
+adopt-info: rpcs3
 summary: Open-source Sony PlayStation 3 Emulator
 description: |
   RPCS3 is a multi-platform open-source Sony PlayStation 3 emulator and debugger written in C++ for Windows, Linux and BSD. 
   It was founded by programmers DH and Hykem. Initially hosted on Google Code, the project was eventually migrated to GitHub later on in its development. 
   RPCS3's first successful boots were primarily composed of small homebrew projects and hardware tests. 
   The emulator was later publicly released in June of 2012 and gained substantial attention from both the open-source community and PlayStation enthusiasts alike. 
-  Today, RPCS3 is primarily developed by its two lead developers; Nekotekina, kd-11 and backed by flourishing team of GitHub contributors.
+  Today, RPCS3 is primarily developed by its two lead developers; Nekotekina, kd-11 and backed by a flourishing team of GitHub contributors.
+  
   --
+  
   **Disclaimer:** This snap is not necessarily endorsed or officially maintained by the upstream developers.
 
   * Upstream Project: https://rpcs3.net/
@@ -23,35 +25,34 @@ architectures:
   - build-on: amd64
 
 package-repositories:
-  - type: apt
-    formats: [deb]
-    components: [main]
-    suites: [focal]
-    # key-id: 0e383f7e
-    key-id: 03F5D621A3710FA95A93D89BAA8452080E383F7E
-    url: https://packages.lunarg.com/vulkan/1.2.148
+  # - type: apt
+  #   formats: [deb]
+  #   components: [main]
+  #   suites: [focal]
+  #   key-id: 03F5D621A3710FA95A93D89BAA8452080E383F7E
+  #   url: https://packages.lunarg.com/vulkan/1.2.154
   - type: apt
     ppa: beineri/opt-qt-5.14.2-focal
 
 parts:
   rpcs3:
+    after:
+    - alsa-lib
+    # - vulkan-headers
+    # - vulkan-loader
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: 40558e7ac179789941ad4d6cc3546500add0ae97
+    # source-commit: b998852385ddcd7c315d583e0a6919095fcc1daf
     plugin: cmake
     build-snaps:
         - cmake
     # cmake-parameters: 
     # - -DCMAKE_BUILD_TYPE=Release
-    # - 
-    # cmake-generator: Ninja #Can be either Ninja or Unix Makefiles (default).
-    # override-pull: |
-    #   snapcraftctl pull
-    #   git apply $SNAPCRAFT_STAGE/nodirtyversion.patch
+    override-pull: |
+      snapcraftctl pull
+      COMM_TAG="$(grep 'version{.*}' rpcs3/rpcs3_version.cpp | awk -F[\{,] '{printf "%d.%d.%d", $2, $3, $4}')"
+      COMM_COUNT="$(git rev-list --count HEAD)"
+      snapcraftctl set-version "${COMM_TAG}-${COMM_COUNT}"
     override-build: |
-      # if [ ! -f /usr/bin/lsb_release ]; then
-      #   apt install -y lsb-release
-      # fi
-      # pip3 install conan
       snapcraftctl build
       sed -i 's|Icon=rpcs3|Icon=/usr/local/share/icons/hicolor/scalable/apps/rpcs3.svg|' $SNAPCRAFT_PART_INSTALL/usr/local/share/applications/rpcs3.desktop
     build-packages:
@@ -62,24 +63,21 @@ parts:
     - libglew-dev 
     - zlib1g-dev 
     - libedit-dev 
-    - libvulkan-dev 
+    - libvulkan-dev
     - libudev-dev 
     - git 
     - libevdev-dev
     - libsdl2-dev
-    - vulkan-sdk
+    # - vulkan-sdk
     # - vulkan-utils
     # - vulkan-tools
     - qt514-meta-minimal 
     - qt514svg
     stage-packages:
     - libsdl2-2.0-0
-    - libasound2
     - qt5-gtk-platformtheme
     - libvulkan1
     - mesa-vulkan-drivers
-    - vulkan-utils
-    - vulkan-tools
     - libpulse0
     - libgl1-mesa-glx
     - mesa-utils
@@ -90,7 +88,74 @@ parts:
     - libsndio7.0
     - qt514-meta-minimal 
     - qt514svg
-    # - xdg-utils
+    - xdg-utils
+  # vulkan-headers:
+  #   source: https://github.com/KhronosGroup/Vulkan-Headers.git
+  #   source-tag: 'sdk-1.2.154.0'
+  #   plugin: cmake
+  #   cmake-parameters:
+  #   - -DCMAKE_INSTALL_PREFIX=/usr
+  #   build-packages:
+  #   - cmake
+  #   - build-essential
+  #   - g++ 
+  #   - gcc 
+  #   - g++-multilib
+  # vulkan-loader:
+  #   after:
+  #   - vulkan-headers
+  #   source: https://github.com/KhronosGroup/Vulkan-Loader.git
+  #   source-tag: 'sdk-1.2.154.0'
+  #   plugin: cmake
+  #   cmake-parameters:
+  #   - -DCMAKE_INSTALL_PREFIX=/usr
+  #   - -DVULKAN_HEADERS_INSTALL_DIR=$SNAPCRAFT_STAGE/usr
+  #   build-packages:
+  #   - libglm-dev 
+  #   - cmake 
+  #   - libxcb-dri3-0 
+  #   - libxcb-present0 
+  #   - libpciaccess0
+  #   - libpng-dev 
+  #   - libxcb-keysyms1-dev 
+  #   - libxcb-dri3-dev 
+  #   - libx11-dev 
+  #   - g++ 
+  #   - gcc 
+  #   - g++-multilib
+  #   - libmirclient-dev
+  #   - libwayland-dev 
+  #   - libxrandr-dev 
+  #   - libxcb-randr0-dev 
+  #   - libxcb-ewmh-dev
+  #   - git 
+  #   - python3 
+  #   - bison
+  #   - libx11-xcb-dev
+  #   - liblz4-dev
+  #   - libzstd-dev
+  alsa-lib:
+    plugin: autotools
+    source: https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.5.tar.bz2
+    autotools-configure-parameters:
+    - --prefix=/usr
+    - --sysconfdir=/etc
+    - --libexec=/usr/lib
+    - --libdir=/usr/lib
+    - --localstatedir=/var
+    - --with-configdir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa
+    - --with-plugindir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/alsa-lib
+    - --disable-static
+    stage:
+    - usr/include
+    - usr/lib
+    prime:
+    - -usr/bin
+    - -usr/include
+    - -usr/lib/pkgconfig
+    - -usr/share/alsa/alsa.conf
+    - -usr/share/alsa/pcm
+    - -usr/share/alsa/topology/broadwell
   desktop-qt5:
     build-packages:
     - build-essential
@@ -127,6 +192,8 @@ parts:
       sed -i 's|XDG_CONFIG_HOME=$SNAP_USER_DATA|XDG_CONFIG_HOME=$SNAP_USER_COMMON|' $SNAPCRAFT_PRIME/bin/desktop-launch
     stage:
       - -usr/share/doc
+      # - -usr/lib/x86_64-linux-gnu/libvulkan.so.1
+      # - -usr/lib/x86_64-linux-gnu/libvulkan.so.1.2.154
   plasma-integration:
     plugin: nil
     stage-packages:
@@ -135,12 +202,8 @@ parts:
     - plasma-integration
     stage:
     - -usr/share/doc
-  # patches:
-  #   plugin: dump
-  #   source: snap/local/patches
-  #   source-type: local
-  #   prime:
-  #     - -*
+    # - -usr/lib/x86_64-linux-gnu/libvulkan.so.1
+    # - -usr/lib/x86_64-linux-gnu/libvulkan.so.1.2.154
   launchers:
     plugin: dump
     source: snap/local/launchers
@@ -169,8 +232,10 @@ layout:
     symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_intel.so
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_radeon.so:
     symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_radeon.so
-  # /usr/share/qt5:
-  #   symlink: $SNAP/usr/share/qt5
+  /etc/openal/alsoft.conf:
+    bind-file: $SNAP/etc/openal/alsoft.conf
+  /usr/share/alsa/alsa.conf:
+    symlink: $SNAP/usr/share/alsa/alsa.conf
 
 apps:
   rpcs3:
@@ -184,6 +249,8 @@ apps:
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/opt/qt514/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
       KDE_FORK_SLAVES: 1
       DISABLE_WAYLAND: 1
+      ALSOFT_CONF: $SNAP/etc/openal/alsoft.conf
+      ALSA_CONFIG_PATH: /snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa/alsa.conf
       PATH: "$PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libexec/kf5"
     plugs:
     - desktop
@@ -191,6 +258,7 @@ apps:
     - x11
     - wayland
     - audio-playback
+    - alsa
     - opengl
     - joystick
     - unity7
@@ -204,4 +272,5 @@ apps:
     - bluez
     - browser-support
     - screen-inhibit-control
+    - process-control
 
