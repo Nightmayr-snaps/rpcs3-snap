@@ -47,10 +47,10 @@ jobs:
       with:
         store_login: ${{ secrets.STORE_LOGIN }}
         snap: ${{ steps.snapcraft.outputs.snap }}
-        release: stable
+        release: edge
     - name: updating versions.json
       run: |
-        cat versions.json | jq '.stable = "${{ env.LATEST_VERSION }}"' | sponge versions.json
+        cat versions.json | jq '.edge = "${{ env.LATEST_VERSION }}"' | sponge versions.json
     - name: Committing updated versions.json
       run: |
         git config --global user.name 'Nightmayr'
