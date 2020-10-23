@@ -9,7 +9,7 @@ LATEST_VERSION="$(curl https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/r
 
 # compare versions
 if [ $CURRENT_VERSION_SNAP != $LATEST_VERSION ]; then
-    echo "versions don't match, github: $LATEST_VERSION_TAG snap: $CURRENT_VERSION_TAG_SNAP"
+    echo "versions don't match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
     echo "updating rpcs3 source commit"
     yq w -i snap/snapcraft.yaml parts.rpcs3.source-commit $LATEST_VERSION_COMMIT
     echo true >> build
