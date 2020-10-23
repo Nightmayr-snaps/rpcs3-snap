@@ -3,20 +3,27 @@ base: core20
 adopt-info: rpcs3
 summary: Open-source Sony PlayStation 3 Emulator
 description: |
-  RPCS3 is a multi-platform open-source Sony PlayStation 3 emulator and debugger written in C++ for Windows, Linux and BSD. 
-  It was founded by programmers DH and Hykem. Initially hosted on Google Code, the project was eventually migrated to GitHub later on in its development. 
-  RPCS3's first successful boots were primarily composed of small homebrew projects and hardware tests. 
-  The emulator was later publicly released in June of 2012 and gained substantial attention from both the open-source community and PlayStation enthusiasts alike. 
-  Today, RPCS3 is primarily developed by its two lead developers; Nekotekina, kd-11 and backed by a flourishing team of GitHub contributors.
+  RPCS3 is a multi-platform open-source Sony PlayStation 3 emulator and debugger written in C++ for
+  Windows, Linux and BSD.
+  It was founded by programmers DH and Hykem. Initially hosted on Google Code, the project was
+  eventually migrated to GitHub later on in its development.
+  RPCS3's first successful boots were primarily composed of small homebrew projects and hardware
+  tests.
+  The emulator was later publicly released in June of 2012 and gained substantial attention from
+  both the open-source community and PlayStation enthusiasts alike.
+  Today, RPCS3 is primarily developed by its two lead developers; Nekotekina, kd-11 and backed by a
+  flourishing team of GitHub contributors.
+  
+  Donate to rpcs3: https://www.patreon.com/Nekotekina
+  
   
   --
   
-  **Disclaimer:** This snap is not necessarily endorsed or officially maintained by the upstream developers.
-
+  **Disclaimer:** This snap is not necessarily endorsed or officially maintained by the upstream
+  developers.
+  
   * Upstream Project: https://rpcs3.net/
   * snapcraft.yaml Build Definition: https://github.com/Nightmayr-snaps/rpcs3-snap/blob/master/snap/snapcraft.yaml
-
-  Donate to rpcs3: https://www.patreon.com/Nekotekina
 license: GPL-2.0
 icon: snap/gui/rpcs3.png
 grade: stable
