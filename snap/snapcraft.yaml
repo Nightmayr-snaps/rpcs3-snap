@@ -76,7 +76,8 @@ parts:
     # - vulkan-sdk
     # - vulkan-utils
     # - vulkan-tools
-    - qt514-meta-minimal 
+    - qt514-meta-minimal
+    - qt514wayland
     - qt514svg
     stage-packages:
     - libsdl2-2.0-0
@@ -92,6 +93,7 @@ parts:
     - libopenal1
     - libsndio7.0
     - qt514-meta-minimal 
+    - qt514wayland
     - qt514svg
     - xdg-utils
   alsa-lib:
@@ -142,7 +144,7 @@ parts:
     - try:
       - appmenu-qt5
     - locales-all
-    - qtwayland5
+    # - qtwayland5
     - xdg-user-dirs
     override-prime: |
       snapcraftctl prime
@@ -200,12 +202,13 @@ apps:
     desktop: usr/local/share/applications/rpcs3.desktop
     environment:
       HOME: "$SNAP_USER_COMMON"
+      QT_DIR: $SNAP/opt/qt514
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/opt/qt514/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
       KDE_FORK_SLAVES: 1
       DISABLE_WAYLAND: 1
       ALSOFT_CONF: $SNAP/etc/openal/alsoft.conf
       ALSA_CONFIG_PATH: /snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa/alsa.conf
-      PATH: "$PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libexec/kf5"
+      PATH: "$PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libexec/kf5:$SNAP/opt/qt514/bin"
     plugs:
     - desktop
     - desktop-legacy
