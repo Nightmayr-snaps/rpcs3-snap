@@ -13,15 +13,15 @@ description: |
   both the open-source community and PlayStation enthusiasts alike.
   Today, RPCS3 is primarily developed by its two lead developers; Nekotekina, kd-11 and backed by a
   flourishing team of GitHub contributors.
-  
+
   Donate to rpcs3: https://www.patreon.com/Nekotekina
-  
-  
+
+
   --
-  
+
   **Disclaimer:** This snap is not necessarily endorsed or officially maintained by the upstream
   developers.
-  
+
   * Upstream Project: https://rpcs3.net/
   * snapcraft.yaml Build Definition: https://github.com/Nightmayr-snaps/rpcs3-snap/blob/master/snap/snapcraft.yaml
 license: GPL-2.0
@@ -30,7 +30,6 @@ grade: stable
 confinement: strict
 architectures:
   - build-on: amd64
-
 package-repositories:
   # - type: apt
   #   formats: [deb]
@@ -40,16 +39,15 @@ package-repositories:
   #   url: https://packages.lunarg.com/vulkan/1.2.154
   - type: apt
     ppa: beineri/opt-qt-5.14.2-focal
-
 parts:
   rpcs3:
     after:
-    - alsa-lib
+      - alsa-lib
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: b998852385ddcd7c315d583e0a6919095fcc1daf
+    source-commit: 27643cb715e511e091182fbb0ce3d077ffea28d4
     plugin: cmake
     build-snaps:
-        - cmake
+      - cmake
     # cmake-parameters: 
     # - -DCMAKE_BUILD_TYPE=Release
     override-pull: |
@@ -61,89 +59,89 @@ parts:
       snapcraftctl build
       sed -i 's|Icon=rpcs3|Icon=/usr/local/share/icons/hicolor/scalable/apps/rpcs3.svg|' $SNAPCRAFT_PART_INSTALL/usr/local/share/applications/rpcs3.desktop
     build-packages:
-    - build-essential
-    - libasound2-dev 
-    - libpulse-dev 
-    - libopenal-dev 
-    - libglew-dev 
-    - zlib1g-dev 
-    - libedit-dev 
-    - libvulkan-dev
-    - libudev-dev 
-    - git 
-    - libevdev-dev
-    - libsdl2-dev
-    # - vulkan-sdk
-    # - vulkan-utils
-    # - vulkan-tools
-    - qt514-meta-minimal 
-    - qt514svg
+      - build-essential
+      - libasound2-dev
+      - libpulse-dev
+      - libopenal-dev
+      - libglew-dev
+      - zlib1g-dev
+      - libedit-dev
+      - libvulkan-dev
+      - libudev-dev
+      - git
+      - libevdev-dev
+      - libsdl2-dev
+      # - vulkan-sdk
+      # - vulkan-utils
+      # - vulkan-tools
+      - qt514-meta-minimal
+      - qt514svg
     stage-packages:
-    - libsdl2-2.0-0
-    - qt5-gtk-platformtheme
-    - libvulkan1
-    - mesa-vulkan-drivers
-    - libpulse0
-    - libgl1-mesa-glx
-    - mesa-utils
-    - libglew2.1
-    - libopengl0
-    - libatomic1
-    - libopenal1
-    - libsndio7.0
-    - qt514-meta-minimal 
-    - qt514svg
-    - xdg-utils
+      - libsdl2-2.0-0
+      - qt5-gtk-platformtheme
+      - libvulkan1
+      - mesa-vulkan-drivers
+      - libpulse0
+      - libgl1-mesa-glx
+      - mesa-utils
+      - libglew2.1
+      - libopengl0
+      - libatomic1
+      - libopenal1
+      - libsndio7.0
+      - qt514-meta-minimal
+      - qt514svg
+      - xdg-utils
   alsa-lib:
     plugin: autotools
     source: https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.5.tar.bz2
     autotools-configure-parameters:
-    - --prefix=/usr
-    - --sysconfdir=/etc
-    - --libexec=/usr/lib
-    - --libdir=/usr/lib
-    - --localstatedir=/var
-    - --with-configdir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa
-    - --with-plugindir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/alsa-lib
-    - --disable-static
+      - --prefix=/usr
+      - --sysconfdir=/etc
+      - --libexec=/usr/lib
+      - --libdir=/usr/lib
+      - --localstatedir=/var
+      - --with-configdir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa
+      - --with-plugindir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/alsa-lib
+      - --disable-static
     stage:
-    - usr/include
-    - usr/lib
+      - usr/include
+      - usr/lib
     prime:
-    - -usr/bin
-    - -usr/include
-    - -usr/lib/pkgconfig
-    - -usr/share/alsa/alsa.conf
-    - -usr/share/alsa/pcm
-    - -usr/share/alsa/topology/broadwell
+      - -usr/bin
+      - -usr/include
+      - -usr/lib/pkgconfig
+      - -usr/share/alsa/alsa.conf
+      - -usr/share/alsa/pcm
+      - -usr/share/alsa/topology/broadwell
   desktop-qt5:
     build-packages:
-    - build-essential
-    - qtbase5-dev
-    - dpkg-dev
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
     make-parameters:
-    - FLAVOR=qt5
+      - FLAVOR=qt5
     plugin: make
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
     source-subdir: qt
     stage-packages:
-    - libxkbcommon0
-    - ttf-ubuntu-font-family
-    - dmz-cursor-theme
-    - light-themes
-    - adwaita-icon-theme
-    - gnome-themes-standard
-    - shared-mime-info
-    - libgtk2.0-0
-    - libgdk-pixbuf2.0-0
-    - libgpm2
-    - freeglut3
-    - libslang2
-    - try:
-      - appmenu-qt5
-    - locales-all
-    - qtwayland5
-    - xdg-user-dirs
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libgtk2.0-0
+      - libgdk-pixbuf2.0-0
+      - libgpm2
+      - freeglut3
+      - libslang2
+      - try:
+          - appmenu-qt5
+      - locales-all
+      - qtwayland5
+      - xdg-user-dirs
     override-prime: |
       snapcraftctl prime
       sed -i 's|XDG_DATA_HOME=$SNAP_USER_DATA|XDG_DATA_HOME=$SNAP_USER_COMMON|' $SNAPCRAFT_PRIME/bin/desktop-launch
@@ -153,18 +151,17 @@ parts:
   plasma-integration:
     plugin: nil
     stage-packages:
-    - breeze-icon-theme
-    - kde-style-breeze
-    - plasma-integration
+      - breeze-icon-theme
+      - kde-style-breeze
+      - plasma-integration
     stage:
-    - -usr/share/doc
+      - -usr/share/doc
   launchers:
     plugin: dump
     source: snap/local/launchers
     source-type: local
     organize:
       '*': bin/
-
 plugs:
   gtk-3-themes:
     interface: content
@@ -178,7 +175,6 @@ plugs:
     interface: content
     target: $SNAP/data-dir/sounds
     default-provider: gtk-common-themes
-
 layout:
   /usr/share/vulkan:
     symlink: $SNAP/usr/share/vulkan
@@ -190,13 +186,12 @@ layout:
     bind-file: $SNAP/etc/openal/alsoft.conf
   /usr/share/alsa/alsa.conf:
     symlink: $SNAP/usr/share/alsa/alsa.conf
-
 apps:
   rpcs3:
     command: usr/local/bin/rpcs3
     command-chain:
-    - "bin/desktop-launch"
-    - "bin/vulkan-icd-files"
+      - "bin/desktop-launch"
+      - "bin/vulkan-icd-files"
     desktop: usr/local/share/applications/rpcs3.desktop
     environment:
       HOME: "$SNAP_USER_COMMON"
@@ -207,24 +202,23 @@ apps:
       ALSA_CONFIG_PATH: /snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa/alsa.conf
       PATH: "$PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libexec/kf5"
     plugs:
-    - desktop
-    - desktop-legacy
-    - x11
-    - wayland
-    - audio-playback
-    - alsa
-    - opengl
-    - joystick
-    - unity7
-    - network
-    - network-bind
-    - home
-    - removable-media
-    - gsettings
-    - hardware-observe
-    - mount-observe
-    - bluez
-    - browser-support
-    - screen-inhibit-control
-    - process-control
-
+      - desktop
+      - desktop-legacy
+      - x11
+      - wayland
+      - audio-playback
+      - alsa
+      - opengl
+      - joystick
+      - unity7
+      - network
+      - network-bind
+      - home
+      - removable-media
+      - gsettings
+      - hardware-observe
+      - mount-observe
+      - bluez
+      - browser-support
+      - screen-inhibit-control
+      - process-control
