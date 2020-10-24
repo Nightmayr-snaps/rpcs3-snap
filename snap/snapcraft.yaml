@@ -48,8 +48,9 @@ parts:
     plugin: cmake
     build-snaps:
       - cmake
-    # cmake-parameters: 
-    # - -DCMAKE_BUILD_TYPE=Release
+    cmake-parameters:
+    - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    - -DUSE_NATIVE_INSTRUCTIONS=OFF
     override-pull: |
       snapcraftctl pull
       COMM_TAG="$(grep 'version{.*}' rpcs3/rpcs3_version.cpp | awk -F[\{,] '{printf "%d.%d.%d", $2, $3, $4}')"

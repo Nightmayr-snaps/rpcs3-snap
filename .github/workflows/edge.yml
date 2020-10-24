@@ -1,24 +1,26 @@
-# name: Build-Snap-Edge
+name: Build-Snap-Edge
 
-# on:
-#   pull_request:
-#     branches: [ master ]
+on:
+  # pull_request:
+  #   branches: [ master ]
+  workflow_dispatch:
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#     - uses: actions/checkout@v2
-#       with:
-#         token: ${{ secrets.PAT }}
-#     - uses: snapcore/action-build@v1
-#       id: snapcraft
-#     - name: Testing snap
-#       run: |
-#         sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
-#         snap run rpcs3-emu.rpcs3 --version
-#     - uses: snapcore/action-publish@v1
-#       with:
-#         store_login: ${{ secrets.STORE_LOGIN }}
-#         snap: ${{ steps.snapcraft.outputs.snap }}
-#         release: edge
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.PAT }}
+    - uses: snapcore/action-build@v1
+      id: snapcraft
+    - name: Testing snap
+      run: |
+        sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
+        snap run rpcs3-emu.rpcs3 --version
+    - uses: snapcore/action-publish@v1
+      with:
+        store_login: ${{ secrets.STORE_LOGIN }}
+        snap: ${{ steps.snapcraft.outputs.snap }}
+        release: edge
