@@ -44,7 +44,7 @@ parts:
     after:
       - alsa-lib
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: 27643cb715e511e091182fbb0ce3d077ffea28d4
+    source-commit: 49610f52f53650f18907ba77853334d318244a94
     plugin: cmake
     build-snaps:
       - cmake
@@ -59,41 +59,41 @@ parts:
       snapcraftctl build
       sed -i 's|Icon=rpcs3|Icon=/usr/local/share/icons/hicolor/scalable/apps/rpcs3.svg|' $SNAPCRAFT_PART_INSTALL/usr/local/share/applications/rpcs3.desktop
     build-packages:
-    - build-essential
-    - libasound2-dev 
-    - libpulse-dev 
-    - libopenal-dev 
-    - libglew-dev 
-    - zlib1g-dev 
-    - libedit-dev 
-    - libvulkan-dev
-    - libudev-dev 
-    - git 
-    - libevdev-dev
-    - libsdl2-dev
-    # - vulkan-sdk
-    # - vulkan-utils
-    # - vulkan-tools
-    - qt514-meta-minimal
-    - qt514wayland
-    - qt514svg
+      - build-essential
+      - libasound2-dev
+      - libpulse-dev
+      - libopenal-dev
+      - libglew-dev
+      - zlib1g-dev
+      - libedit-dev
+      - libvulkan-dev
+      - libudev-dev
+      - git
+      - libevdev-dev
+      - libsdl2-dev
+      # - vulkan-sdk
+      # - vulkan-utils
+      # - vulkan-tools
+      - qt514-meta-minimal
+      - qt514wayland
+      - qt514svg
     stage-packages:
-    - libsdl2-2.0-0
-    - qt5-gtk-platformtheme
-    - libvulkan1
-    - mesa-vulkan-drivers
-    - libpulse0
-    - libgl1-mesa-glx
-    - mesa-utils
-    - libglew2.1
-    - libopengl0
-    - libatomic1
-    - libopenal1
-    - libsndio7.0
-    - qt514-meta-minimal 
-    - qt514wayland
-    - qt514svg
-    - xdg-utils
+      - libsdl2-2.0-0
+      - qt5-gtk-platformtheme
+      - libvulkan1
+      - mesa-vulkan-drivers
+      - libpulse0
+      - libgl1-mesa-glx
+      - mesa-utils
+      - libglew2.1
+      - libopengl0
+      - libatomic1
+      - libopenal1
+      - libsndio7.0
+      - qt514-meta-minimal
+      - qt514wayland
+      - qt514svg
+      - xdg-utils
   alsa-lib:
     plugin: autotools
     source: https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.5.tar.bz2
@@ -127,23 +127,23 @@ parts:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
     source-subdir: qt
     stage-packages:
-    - libxkbcommon0
-    - ttf-ubuntu-font-family
-    - dmz-cursor-theme
-    - light-themes
-    - adwaita-icon-theme
-    - gnome-themes-standard
-    - shared-mime-info
-    - libgtk2.0-0
-    - libgdk-pixbuf2.0-0
-    - libgpm2
-    - freeglut3
-    - libslang2
-    - try:
-      - appmenu-qt5
-    - locales-all
-    # - qtwayland5
-    - xdg-user-dirs
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libgtk2.0-0
+      - libgdk-pixbuf2.0-0
+      - libgpm2
+      - freeglut3
+      - libslang2
+      - try:
+          - appmenu-qt5
+      - locales-all
+      # - qtwayland5
+      - xdg-user-dirs
     override-prime: |
       snapcraftctl prime
       sed -i 's|XDG_DATA_HOME=$SNAP_USER_DATA|XDG_DATA_HOME=$SNAP_USER_COMMON|' $SNAPCRAFT_PRIME/bin/desktop-launch
