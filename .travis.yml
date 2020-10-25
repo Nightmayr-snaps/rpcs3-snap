@@ -1,0 +1,65 @@
+language: bash
+dist: bionic
+
+env:
+  global:
+    - LC_ALL: C.UTF-8
+    - LANG: C.UTF-8
+    - SNAPCRAFT_ENABLE_SILENT_REPORT: y
+    - SNAPCRAFT_ENABLE_DEVELOPER_DEBUG: y
+
+# before_install:
+#   - sudo apt-get -y install jq
+addons:
+  snaps:
+    - name: snapcraft
+      channel: stable
+      classic: true
+    - name: lxd
+      channel: stable
+    - name: yq
+      channel: stable
+  apt:
+    packages:
+      - jq
+    update: true
+
+jobs:
+  include:
+      - stage: "Set up Snapcraft"
+        name: "Snapcraft"
+        script:
+          - sudo apt update
+          - sudo /snap/bin/lxd.migrate -yes
+          - sudo /snap/bin/lxd waitready
+          - sudo /snap/bin/lxd init --auto
+          - mkdir -p "$TRAVIS_BUILD_DIR/snaps-cache"
+      - stage: "Version check"
+        name: "version check"
+        script: ./.github/script/version2.sh
+      - stage: "Snapcraft"
+        if: env(BUILD)=true
+        name: "Snapcraft build"
+        script:
+          - sudo snapcraft --use-lxd
+      - stage: "Update"
+        if: env(BUILD)=true
+        name: "update versions.json"
+        script:
+          - cat versions.json
+          - cat versions.json | jq '.edge = "${LATEST_VERSION}"' | sponge versions.json
+          - cat versions.json
+    
+# script:
+#   - sudo apt update
+#   - sudo /snap/bin/lxd.migrate -yes
+#   - sudo /snap/bin/lxd waitready
+#   - sudo /snap/bin/lxd init --auto
+#   - mkdir -p "$TRAVIS_BUILD_DIR/snaps-cache"
+#   - sudo snapcraft --use-lxd
+# after_success:
+#   - cp *.snap "$(echo "$TRAVIS_REPO_SLUG" | sed -e 's|.*/\(.*\)|\1|')-pr$TRAVIS_PULL_REQUEST.snap"
+#   - timeout 180 /snap/bin/transfer "$(echo "$TRAVIS_REPO_SLUG" | sed -e 's|.*/\(.*\)|\1|')-pr$TRAVIS_PULL_REQUEST.snap"
+# after_failure:
+#   - sudo journalctl -u snapd
+#   - http https://api.snapcraft.io/v2/snaps/info/core architecture==amd64 Snap-Device-Series:16
