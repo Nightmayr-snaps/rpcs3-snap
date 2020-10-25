@@ -38,10 +38,12 @@ jobs:
         name: "version check"
         script: ./.github/script/version2.sh
       - stage: "Snapcraft"
+        if: env(BUILD)=true
         name: "Snapcraft build"
         script:
           - sudo snapcraft --use-lxd
       - stage: "Update"
+        if: env(BUILD)=true
         name: "update versions.json"
         script:
           - cat versions.json
