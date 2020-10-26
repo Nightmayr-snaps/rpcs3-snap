@@ -36,12 +36,12 @@ jobs:
           - mkdir -p "$TRAVIS_BUILD_DIR/snaps-cache"
       - stage: "Version check"
         name: "version check"
-        script: ./.github/script/version2.sh
-      - stage: "Snapcraft"
+        script: ./.github/scripts/version2.sh
+      - stage: "Build"
         if: env(BUILD)=true
         name: "Snapcraft build"
         script:
-          - sudo snapcraft --use-lxd
+          - sudo snapcraft --use-lxd --enable-experimental-package-repositories
       - stage: "Update"
         if: env(BUILD)=true
         name: "update versions.json"
