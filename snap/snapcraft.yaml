@@ -51,6 +51,7 @@ parts:
     cmake-parameters:
     - -DCMAKE_BUILD_TYPE=RelWithDebInfo
     - -DUSE_NATIVE_INSTRUCTIONS=OFF
+    - -DBUILD_LLVM_SUBMODULE=ON
     override-pull: |
       snapcraftctl pull
       COMM_TAG="$(grep 'version{.*}' rpcs3/rpcs3_version.cpp | awk -F[\{,] '{printf "%d.%d.%d", $2, $3, $4}')"
