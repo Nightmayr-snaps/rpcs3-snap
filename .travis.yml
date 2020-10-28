@@ -50,8 +50,6 @@ script:
   - sudo /snap/bin/lxd init --auto
   - mkdir -p "$TRAVIS_BUILD_DIR/snaps-cache"
   - if [ $BUILD == true ]; then sudo snapcraft --use-lxd --enable-experimental-package-repositories; else exit 1; fi
-  - cat versions.json | jq '.edge = "${LATEST_VERSION}"' | sponge versions.json
-  - cat versions.json
 
 after_failure:
   - sudo journalctl -u snapd
