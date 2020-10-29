@@ -32,13 +32,13 @@ jobs:
                 echo "versions don't match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
                 echo "updating rpcs3 source commit"
                 yq w -i snap/snapcraft.yaml parts.rpcs3.source-commit $LATEST_VERSION_COMMIT
-                export BUILD="true"
-                export LATEST_VERSION
-                export LATEST_VERSION_COMMIT
-                export CURRENT_VERSION_SNAP
+                echo 'export BUILD="true"' >> $BASH_ENV
+                echo "export LATEST_VERSION=$LATEST_VERSION" >> $BASH_ENV
+                echo "export LATEST_VERSION_COMMIT=$LATEST_VERSION_COMMIT" >> $BASH_ENV
+                echo "export CURRENT_VERSION_SNAP=$CURRENT_VERSION_SNAP" >> $BASH_ENV
             else
                 echo "versions match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
-                export BUILD="false"
+                echo 'export BUILD="false"' >> $BASH_ENV
             fi
       - run:
           name: Versions match - Cancel
@@ -60,7 +60,7 @@ jobs:
           command: |
             mkdir .snapcraft
             echo $SNAP_STORE_LOGIN | base64 --decode --ignore-garbage > .snapcraft/store-login.txt
-            snapcraft login --with-file .snapcraft/store-login.txt
+            snapcraft login --with .snapcraft/store-login.txt
             snapcraft upload *.snap --release edge
             rmdir .snapcraft
       - run:
