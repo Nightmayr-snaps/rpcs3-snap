@@ -32,17 +32,20 @@ jobs:
                 echo "versions don't match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
                 echo "updating rpcs3 source commit"
                 yq w -i snap/snapcraft.yaml parts.rpcs3.source-commit $LATEST_VERSION_COMMIT
-                echo true >> build
-                echo $LATEST_VERSION >> latest
-                echo $LATEST_VERSION_COMMIT >> latest_commit
-                echo $CURRENT_VERSION_SNAP >> current
+                export BUILD="true"
+                export LATEST_VERSION
+                export LATEST_VERSION_COMMIT
+                export CURRENT_VERSION_SNAP
             else
                 echo "versions match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
-                echo false >> build
+                export BUILD="false"
             fi
       - run:
           name: Versions match - Cancel
-          command: if [ $BUILD == false ]; then circleci-agent step halt; fi
+          command: |
+            if [ $BUILD == false ]; then
+              circleci-agent step halt
+            fi
       - run:
           name: Snap build
           command: |
@@ -53,14 +56,19 @@ jobs:
             sudo snap install *.snap --dangerous
             snap run rpcs3-emu.rpcs3 --version
       - run:
-          name: "Publish to Store"
+          name: "Publish to Snap Store"
           command: |
             mkdir .snapcraft
-            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
-            snapcraft push *.snap --release stable
+            echo $SNAP_STORE_LOGIN | base64 --decode --ignore-garbage > .snapcraft/store-login.txt
+            snapcraft login --with-file .snapcraft/store-login.txt
+            snapcraft upload *.snap --release edge
+            rmdir .snapcraft
+      - run:
+          name: Updating versions.json
+          command:  |
+            cat versions.json | jq '.edge = "${LATEST_VERSION}"' | sponge versions.json
+            git config --global user.name 'Nightmayr'
+            git config --global user.email 'umayr23@gmail.com'
+            git commit -am "Updating version [ci skip]"
+            git push -q https://${GITHUB_PAT}@github.com/Nightmayr-snaps/rpcs3-snap.git master
 
-
-
-      # - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      # - run: docker build -t orgname/image:tag .
-      # - run: docker push orgname/image:tag
