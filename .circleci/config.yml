@@ -43,7 +43,7 @@ jobs:
       - run:
           name: Versions match - Cancel
           command: |
-            if [ $BUILD == false ]; then
+            if [ ${BUILD} == false ]; then
               circleci-agent step halt
             fi
       - run:
