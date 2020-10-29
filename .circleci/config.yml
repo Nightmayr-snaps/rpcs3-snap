@@ -14,11 +14,11 @@ jobs:
             sudo apt install -y jq
             sudo apt install -y moreutils
             sudo snap install yq
-            sudo snap install snapcraft --classic
-            sudo snap install lxd
-            sudo /snap/bin/lxd.migrate -yes
-            sudo /snap/bin/lxd waitready
-            sudo /snap/bin/lxd init --auto
+            # sudo snap install snapcraft --classic
+            # sudo snap install lxd
+            # sudo /snap/bin/lxd.migrate -yes
+            # sudo /snap/bin/lxd waitready
+            # sudo /snap/bin/lxd init --auto
       - run: 
           name: Version check
           command: |
