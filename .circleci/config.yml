@@ -89,17 +89,17 @@ jobs:
 workflows:
   version: 2
   build-and-publish:
+    triggers:
+      - schedule:
+          cron: "0 */5 * * *"
+          filters:
+            branches:
+              only: master
     jobs:
       - build
       - publish:
           requires:
             - build
-          filters:
-            branches:
-              only: master
-    triggers:
-      - schedule:
-          cron: "0 */5 * * *"
   
   build:
     jobs:
