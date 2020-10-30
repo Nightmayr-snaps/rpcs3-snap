@@ -87,6 +87,7 @@ jobs:
             git push -q https://${GITHUB_PAT}@github.com/Nightmayr-snaps/rpcs3-snap.git master
 
 workflows:
+  version: 2
   build-and-publish:
     jobs:
       - build
