@@ -91,7 +91,7 @@ workflows:
   build-and-publish:
     triggers:
       - schedule:
-          cron: "0 */5 * * *"
+          cron: "0 0,5,10,15,20 * * *"
           filters:
             branches:
               only: master
