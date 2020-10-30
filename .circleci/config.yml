@@ -1,14 +1,12 @@
 version: 2
 jobs:
   build:
-    # machine: true
     machine:
       image: ubuntu-2004:202010-01
-    
     steps:
       - checkout
       - run:
-          name: Install Job dependencies
+          name: Install Build dependencies
           command: |
             sudo apt update
             sudo apt install -y jq
@@ -55,6 +53,22 @@ jobs:
           command: |
             sudo snap install *.snap --dangerous
             snap run rpcs3-emu.rpcs3 --version
+      # - run:
+      #     name:
+      # - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
+      #     path: "*.snap"
+  publish:
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install Publish dependencies
+          command: |
+            sudo apt update
+            sudo apt install -y jq
+            sudo apt install -y moreutils
       - run:
           name: "Publish to Snap Store"
           command: |
@@ -62,7 +76,7 @@ jobs:
             echo $SNAP_STORE_LOGIN | base64 --decode --ignore-garbage > .snapcraft/store-login.txt
             snapcraft login --with .snapcraft/store-login.txt
             snapcraft upload *.snap --release edge
-            rmdir .snapcraft
+            rm -rf .snapcraft
       - run:
           name: Updating versions.json
           command:  |
@@ -72,3 +86,24 @@ jobs:
             git commit -am "Updating version [ci skip]"
             git push -q https://${GITHUB_PAT}@github.com/Nightmayr-snaps/rpcs3-snap.git master
 
+workflows:
+  build-and-publish:
+    jobs:
+      - build
+      - publish:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+    triggers:
+      - schedule:
+          cron: "0 */5 * * *"
+  
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: master
+  
