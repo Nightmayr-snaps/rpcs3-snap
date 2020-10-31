@@ -13,17 +13,21 @@ description: |
   both the open-source community and PlayStation enthusiasts alike.
   Today, RPCS3 is primarily developed by its two lead developers; Nekotekina, kd-11 and backed by a
   flourishing team of GitHub contributors.
-
+  
   Donate to rpcs3: https://www.patreon.com/Nekotekina
-
-
+  
+  
   --
-
+  
   **Disclaimer:** This snap is not necessarily endorsed or officially maintained by the upstream
   developers.
-
+  
   * Upstream Project: https://rpcs3.net/
-  * snapcraft.yaml Build Definition: https://github.com/Nightmayr-snaps/rpcs3-snap/blob/master/snap/snapcraft.yaml
+  * snapcraft.yaml Build Definition:
+  https://github.com/Nightmayr-snaps/rpcs3-snap/blob/master/snap/snapcraft.yaml
+  
+  **Please report any bugs/issues with this snap here:**
+  https://github.com/Nightmayr-snaps/rpcs3-snap/issues
 license: GPL-2.0
 icon: snap/gui/rpcs3.png
 grade: stable
@@ -50,16 +54,24 @@ parts:
       - cmake
     cmake-parameters:
       - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DCMAKE_INSTALL_PREFIX=/usr
       - -DUSE_NATIVE_INSTRUCTIONS=OFF
-      - -DBUILD_LLVM_SUBMODULE=ON
+      - -DBUILD_LLVM_SUBMODULE=OFF
+      - -DLLVM_DIR=$SNAPCRAFT_PART_BUILD/llvmlibs/lib/cmake/llvm/
+      - -DUSE_PRECOMPILED_HEADERS=OFF
+      # - -DUSE_SYSTEM_CURL=ON
+    cmake-generator: Ninja
     override-pull: |
       snapcraftctl pull
       COMM_TAG="$(grep 'version{.*}' rpcs3/rpcs3_version.cpp | awk -F[\{,] '{printf "%d.%d.%d", $2, $3, $4}')"
       COMM_COUNT="$(git rev-list --count HEAD)"
       snapcraftctl set-version "${COMM_TAG}-${COMM_COUNT}"
     override-build: |
+      curl -sLO https://github.com/RPCS3/llvm-mirror/releases/download/custom-build/llvmlibs-linux.tar.gz
+      mkdir llvmlibs
+      tar -xzf ./llvmlibs-linux.tar.gz -C llvmlibs
       snapcraftctl build
-      sed -i 's|Icon=rpcs3|Icon=/usr/local/share/icons/hicolor/scalable/apps/rpcs3.svg|' $SNAPCRAFT_PART_INSTALL/usr/local/share/applications/rpcs3.desktop
+      sed -i 's|Icon=rpcs3|Icon=/usr/share/icons/hicolor/scalable/apps/rpcs3.svg|' $SNAPCRAFT_PART_INSTALL/usr/share/applications/rpcs3.desktop
     build-packages:
       - build-essential
       - libasound2-dev
@@ -79,6 +91,7 @@ parts:
       - qt514-meta-minimal
       - qt514wayland
       - qt514svg
+      - curl
     stage-packages:
       - libsdl2-2.0-0
       - qt5-gtk-platformtheme
@@ -144,7 +157,6 @@ parts:
       - try:
           - appmenu-qt5
       - locales-all
-      # - qtwayland5
       - xdg-user-dirs
     override-prime: |
       snapcraftctl prime
@@ -192,11 +204,11 @@ layout:
     symlink: $SNAP/usr/share/alsa/alsa.conf
 apps:
   rpcs3:
-    command: usr/local/bin/rpcs3
+    command: usr/bin/rpcs3
     command-chain:
       - "bin/desktop-launch"
       - "bin/vulkan-icd-files"
-    desktop: usr/local/share/applications/rpcs3.desktop
+    desktop: usr/share/applications/rpcs3.desktop
     environment:
       HOME: "$SNAP_USER_COMMON"
       QT_DIR: $SNAP/opt/qt514
