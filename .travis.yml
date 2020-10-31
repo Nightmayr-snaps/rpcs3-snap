@@ -1,69 +1,69 @@
-# language: bash
-# dist: bionic
+language: bash
+dist: bionic
 
-# env:
-#   global:
-#     - LC_ALL: C.UTF-8
-#     - LANG: C.UTF-8
-#     - SNAPCRAFT_ENABLE_SILENT_REPORT: y
-#     - SNAPCRAFT_ENABLE_DEVELOPER_DEBUG: y
+env:
+  global:
+    - LC_ALL: C.UTF-8
+    - LANG: C.UTF-8
+    - SNAPCRAFT_ENABLE_SILENT_REPORT: y
+    - SNAPCRAFT_ENABLE_DEVELOPER_DEBUG: y
 
-# addons:
-#   snaps:
-#     - name: snapcraft
-#       channel: stable
-#       classic: true
-#     - name: lxd
-#       channel: stable
-#     - name: yq
-#       channel: stable
-#   apt:
-#     packages:
-#       - jq
-#     update: true
+addons:
+  snaps:
+    - name: snapcraft
+      channel: stable
+      classic: true
+    - name: lxd
+      channel: stable
+    - name: yq
+      channel: stable
+  apt:
+    packages:
+      - jq
+    update: true
 
 
-# before_script: |
-#   LATEST_VERSION_TAG="$(curl https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest -s | jq .tag_name -r)"
-#   CURRENT_VERSION_SNAP="$(snap info rpcs3-emu | grep edge | head -n 2 | tail -n 1 | awk -F ' ' '{print $2}')"
-#   LATEST_VERSION_COMMIT=${LATEST_VERSION_TAG#build-}
-#   LATEST_VERSION="$(curl https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest -s | jq .name -r)"
+before_script: |
+  LATEST_VERSION_TAG="$(curl https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest -s | jq .tag_name -r)"
+  CURRENT_VERSION_SNAP="$(snap info rpcs3-emu | grep edge | head -n 2 | tail -n 1 | awk -F ' ' '{print $2}')"
+  LATEST_VERSION_COMMIT=${LATEST_VERSION_TAG#build-}
+  LATEST_VERSION="$(curl https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest -s | jq .name -r)"
 
-#   # compare versions
-#   if [ $CURRENT_VERSION_SNAP != $LATEST_VERSION ]; then
-#       echo "versions don't match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
-#       echo "updating rpcs3 source commit"
-#       yq w -i snap/snapcraft.yaml parts.rpcs3.source-commit $LATEST_VERSION_COMMIT
-#       export BUILD="true"
-#       export LATEST_VERSION
-#       export LATEST_VERSION_COMMIT
-#       export CURRENT_VERSION_SNAP
-#   else
-#       echo "versions match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
-#       export BUILD="false"
-#   fi
+  # compare versions
+  if [ $CURRENT_VERSION_SNAP != $LATEST_VERSION ]; then
+      echo "versions don't match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
+      echo "updating rpcs3 source commit"
+      yq w -i snap/snapcraft.yaml parts.rpcs3.source-commit $LATEST_VERSION_COMMIT
+      export BUILD="true"
+      export LATEST_VERSION
+      export LATEST_VERSION_COMMIT
+      export CURRENT_VERSION_SNAP
+  else
+      echo "versions match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
+      export BUILD="false"
+  fi
   
-# script: 
-#   - sudo apt update
-#   - sudo /snap/bin/lxd.migrate -yes
-#   - sudo /snap/bin/lxd waitready
-#   - sudo /snap/bin/lxd init --auto
-#   - mkdir -p "$TRAVIS_BUILD_DIR/snaps-cache"
-#   - if [ $BUILD == true ]; then sudo snapcraft --use-lxd --enable-experimental-package-repositories; else exit 1; fi
+script: 
+  - sudo apt update
+  - sudo /snap/bin/lxd.migrate -yes
+  - sudo /snap/bin/lxd waitready
+  - sudo /snap/bin/lxd init --auto
+  - mkdir -p "$TRAVIS_BUILD_DIR/snaps-cache"
+  - if [ $BUILD == true ]; then sudo snapcraft --use-lxd --enable-experimental-package-repositories; else exit 1; fi
 
-# after_failure:
-#   - sudo journalctl -u snapd
+after_failure:
+  - sudo journalctl -u snapd
 
-# deploy:
-#   provider: snap
-#   snap: rpcs3-emu_*.snap
-#   channel: edge
-#   cleanup: false
-#   skip_cleanup: true
+deploy:
+  provider: snap
+  snap: rpcs3-emu_*.snap
+  channel: edge
+  cleanup: false
+  skip_cleanup: true
 
-# after_deploy:
-#   - cat versions.json | jq '.edge = "${LATEST_VERSION}"' | sponge versions.json
-#   - git config --global user.name 'Nightmayr'
-#   - git config --global user.email 'umayr23@gmail.com'
-#   - git commit -am "Updating version [ci-skip]"
-#   - git push origin master
+after_deploy:
+  - cat versions.json | jq '.edge = "${LATEST_VERSION}"' | sponge versions.json
+  - git config --global user.name 'Nightmayr'
+  - git config --global user.email 'umayr23@gmail.com'
+  - git commit -am "Updating version [ci-skip]"
+  - git push origin master

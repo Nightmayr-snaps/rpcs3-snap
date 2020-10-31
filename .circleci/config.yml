@@ -53,6 +53,10 @@ jobs:
           command: |
             sudo snap install *.snap --dangerous
             snap run rpcs3-emu.rpcs3 --version
+      - persist_to_workspace:
+            root: ./
+            paths:
+                - "./"
       # - run:
       #     name:
       # - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
