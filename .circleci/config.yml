@@ -84,7 +84,8 @@ jobs:
       - run:
           name: Updating versions.json
           command:  |
-            cat versions.json | jq '.edge = "${LATEST_VERSION}"' | sponge versions.json
+            export BUILT_SNAP_VERSION="$(ls *.snap | cut -f2 -d '_')"
+            cat versions.json | jq '.edge = "$BUILT_SNAP_VERSION"' | sponge versions.json
             git config --global user.name 'Nightmayr'
             git config --global user.email 'umayr23@gmail.com'
             git commit -am "Updating version [ci skip]"
