@@ -44,14 +44,14 @@ parts:
     after:
       - alsa-lib
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: 49610f52f53650f18907ba77853334d318244a94
+    source-commit: c2c559f8d93c35c2c7360c39fb2c5d90538fa5e0
     plugin: cmake
     build-snaps:
       - cmake
     cmake-parameters:
-    - -DCMAKE_BUILD_TYPE=RelWithDebInfo
-    - -DUSE_NATIVE_INSTRUCTIONS=OFF
-    - -DBUILD_LLVM_SUBMODULE=ON
+      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DUSE_NATIVE_INSTRUCTIONS=OFF
+      - -DBUILD_LLVM_SUBMODULE=ON
     override-pull: |
       snapcraftctl pull
       COMM_TAG="$(grep 'version{.*}' rpcs3/rpcs3_version.cpp | awk -F[\{,] '{printf "%d.%d.%d", $2, $3, $4}')"
