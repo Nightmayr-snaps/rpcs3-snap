@@ -13,19 +13,19 @@ description: |
   both the open-source community and PlayStation enthusiasts alike.
   Today, RPCS3 is primarily developed by its two lead developers; Nekotekina, kd-11 and backed by a
   flourishing team of GitHub contributors.
-  
+
   Donate to rpcs3: https://www.patreon.com/Nekotekina
-  
-  
+
+
   --
-  
+
   **Disclaimer:** This snap is not necessarily endorsed or officially maintained by the upstream
   developers.
-  
+
   * Upstream Project: https://rpcs3.net/
   * snapcraft.yaml Build Definition:
   https://github.com/Nightmayr-snaps/rpcs3-snap/blob/master/snap/snapcraft.yaml
-  
+
   **Please report any bugs/issues with this snap here:**
   https://github.com/Nightmayr-snaps/rpcs3-snap/issues
 license: GPL-2.0
@@ -48,7 +48,7 @@ parts:
     after:
       - alsa-lib
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: 36149fd9867f9e7af2a1c10fe3a96fb8b205db1b
+    source-commit: ca57f25f261ab255681e94fb4c6df87dc5ed234e
     plugin: cmake
     build-snaps:
       - cmake
