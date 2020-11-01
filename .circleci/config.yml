@@ -97,7 +97,10 @@ workflows:
 
   build-and-publish:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: master
       - publish:
           requires:
             - build
