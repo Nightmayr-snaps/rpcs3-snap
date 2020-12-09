@@ -88,9 +88,9 @@ parts:
       # - vulkan-sdk
       # - vulkan-utils
       # - vulkan-tools
-      - qt514-meta-minimal
-      - qt514wayland
-      - qt514svg
+      - qt515-meta-minimal
+      - qt515wayland
+      - qt515svg
       - curl
     stage-packages:
       - libsdl2-2.0-0
@@ -105,9 +105,9 @@ parts:
       - libatomic1
       - libopenal1
       - libsndio7.0
-      - qt514-meta-minimal
-      - qt514wayland
-      - qt514svg
+      - qt515-meta-minimal
+      - qt515wayland
+      - qt515svg
       - xdg-utils
   alsa-lib:
     plugin: autotools
