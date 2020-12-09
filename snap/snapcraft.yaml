@@ -42,7 +42,7 @@ package-repositories:
   #   key-id: 03F5D621A3710FA95A93D89BAA8452080E383F7E
   #   url: https://packages.lunarg.com/vulkan/1.2.154
   - type: apt
-    ppa: beineri/opt-qt-5.14.2-focal
+    ppa: beineri/opt-qt-5.15.2-focal
 parts:
   rpcs3:
     after:
