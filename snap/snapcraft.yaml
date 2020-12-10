@@ -88,7 +88,9 @@ parts:
       # - vulkan-sdk
       # - vulkan-utils
       # - vulkan-tools
-      - qt515-meta-minimal
+      - qt515base
+      - qt515declarative
+      - qt515xmlpatterns
       - qt515wayland
       - qt515svg
       - curl
@@ -105,7 +107,9 @@ parts:
       - libatomic1
       - libopenal1
       - libsndio7.0
-      - qt515-meta-minimal
+      - qt515base
+      - qt515declarative
+      - qt515xmlpatterns
       - qt515wayland
       - qt515svg
       - xdg-utils
