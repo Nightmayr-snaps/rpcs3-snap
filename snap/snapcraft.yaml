@@ -216,12 +216,12 @@ apps:
     environment:
       HOME: "$SNAP_USER_COMMON"
       QT_DIR: $SNAP/opt/qt514
-      LD_LIBRARY_PATH: "$SNAP/opt/qt514/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
+      LD_LIBRARY_PATH: "$SNAP/opt/qt515/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
       KDE_FORK_SLAVES: 1
       DISABLE_WAYLAND: 1
       ALSOFT_CONF: $SNAP/etc/openal/alsoft.conf
       ALSA_CONFIG_PATH: /snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa/alsa.conf
-      PATH: "$PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libexec/kf5:$SNAP/opt/qt514/bin"
+      PATH: "$PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libexec/kf5:$SNAP/opt/qt515/bin"
     plugs:
       - desktop
       - desktop-legacy
