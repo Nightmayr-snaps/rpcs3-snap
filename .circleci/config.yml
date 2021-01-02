@@ -31,7 +31,7 @@ jobs:
             if [ $CURRENT_VERSION_SNAP != $LATEST_VERSION ]; then
                 echo "versions don't match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
                 echo "updating rpcs3 source commit"
-                yq w -i snap/snapcraft.yaml parts.rpcs3.source-commit $LATEST_VERSION_COMMIT
+                yq eval 'parts.rpcs3.source-commit' = $LATEST_VERSION_COMMIT -i snap/snapcraft.yaml
                 echo 'export BUILD="true"' >> $BASH_ENV
                 echo "export LATEST_VERSION=$LATEST_VERSION" >> $BASH_ENV
                 echo "export LATEST_VERSION_COMMIT=$LATEST_VERSION_COMMIT" >> $BASH_ENV
