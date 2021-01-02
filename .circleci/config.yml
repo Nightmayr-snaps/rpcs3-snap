@@ -20,9 +20,6 @@ jobs:
       - run: 
           name: Version check
           command: |
-            set -x
-            ls
-            pwd
             LATEST_VERSION_TAG="$(curl https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest -s | jq .tag_name -r)"
             CURRENT_VERSION_SNAP="$(snap info rpcs3-emu | grep edge | head -n 2 | tail -n 1 | awk -F ' ' '{print $2}')"
             LATEST_VERSION_COMMIT=${LATEST_VERSION_TAG#build-}
@@ -34,7 +31,7 @@ jobs:
             if [ $CURRENT_VERSION_SNAP != $LATEST_VERSION ]; then
                 echo "versions don't match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
                 echo "updating rpcs3 source commit"
-                yq eval 'parts.rpcs3.source-commit' = $LATEST_VERSION_COMMIT -i snap/snapcraft.yaml
+                yq eval ".parts.rpcs3.source-commit = \"$LATEST_VERSION_COMMIT\"" -i snap/snapcraft.yaml
                 echo 'export BUILD="true"' >> $BASH_ENV
                 echo "export LATEST_VERSION=$LATEST_VERSION" >> $BASH_ENV
                 echo "export LATEST_VERSION_COMMIT=$LATEST_VERSION_COMMIT" >> $BASH_ENV
