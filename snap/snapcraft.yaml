@@ -48,7 +48,7 @@ parts:
     after:
       - alsa-lib
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: 3567c43fb5fa297de0d6a3bc663a6445b39f4d2c
+    source-commit: a2e8e3090c992402fb8723761319cb03e4b5f9ef
     plugin: cmake
     build-snaps:
       - cmake
