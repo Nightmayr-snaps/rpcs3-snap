@@ -41,6 +41,10 @@ jobs:
                 echo 'export BUILD="false"' >> $BASH_ENV
                 echo 'export BUILD="false"' >> build
             fi
+      - persist_to_workspace:
+            root: ./
+            paths:
+                - "./"
       - run:
           name: Versions match - Cancel
           command: |
