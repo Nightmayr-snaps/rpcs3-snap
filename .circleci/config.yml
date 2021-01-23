@@ -39,6 +39,7 @@ jobs:
             else
                 echo "versions match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
                 echo 'export BUILD="false"' >> $BASH_ENV
+                echo 'export BUILD="false"' >> /tmp/build
             fi
       - run:
           name: Versions match - Cancel
@@ -69,6 +70,12 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - run:
+          name: Copy build variable from temp file
+          command: |
+            if [ -f /tmp/build ]; then
+              cat /tmp/build >> $BASH_ENV
+            fi
       - run:
           name:  Build cancelled - Cancel Publish
           command: |
