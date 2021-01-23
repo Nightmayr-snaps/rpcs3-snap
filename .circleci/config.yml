@@ -76,7 +76,7 @@ jobs:
             if [ -f build ]; then
               cat build >> $BASH_ENV
             fi
-            cat /tmp/build
+            cat build
             cat $BASH_ENV
       - run:
           name:  Build cancelled - Cancel Publish
