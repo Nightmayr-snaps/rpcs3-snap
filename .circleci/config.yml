@@ -70,6 +70,12 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name:  Build cancelled - Cancel Publish
+          command: |
+            if [ ${BUILD} == false ]; then
+              circleci-agent step halt
+            fi
+      - run:
           name: Install Publish dependencies
           command: |
             sudo apt update
