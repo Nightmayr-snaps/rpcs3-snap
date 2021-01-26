@@ -1,22 +1,17 @@
 version: 2
 jobs:
-  build:
+  versioning:
     machine:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
       - run:
-          name: Install Build dependencies
+          name: Install dependencies
           command: |
             sudo apt update
             sudo apt install -y jq
             sudo apt install -y moreutils
             sudo snap install yq
-            # sudo snap install snapcraft --classic
-            # sudo snap install lxd
-            # sudo /snap/bin/lxd.migrate -yes
-            # sudo /snap/bin/lxd waitready
-            # sudo /snap/bin/lxd init --auto
       - run: 
           name: Version check
           command: |
@@ -45,7 +40,18 @@ jobs:
             root: ./
             paths:
                 - "./"
+  build:
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - attach_workspace:
+          at: .
       - run:
+          name: Copy build variable from temp file
+          command: |
+            if [ -f build ]; then
+              cat build >> $BASH_ENV
+            fi
           name: Versions match - Cancel
           command: |
             if [ ${BUILD} == false ]; then
@@ -116,7 +122,13 @@ workflows:
 
   build-and-publish:
     jobs:
+      - versioning:
+          filters:
+            branches:
+              only: master
       - build:
+          requires:
+            - versioning
           filters:
             branches:
               only: master
@@ -135,7 +147,10 @@ workflows:
             branches:
               only: master
     jobs:
-      - build
+      - versioning
+      - build:
+          requires:
+            - versioning
       - publish:
           requires:
             - build
