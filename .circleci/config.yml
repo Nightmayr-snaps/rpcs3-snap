@@ -52,6 +52,7 @@ jobs:
             if [ -f build ]; then
               cat build >> $BASH_ENV
             fi
+      - run:
           name: Versions match - Cancel
           command: |
             if [ ${BUILD} == false ]; then
