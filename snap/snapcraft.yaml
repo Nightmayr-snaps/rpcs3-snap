@@ -59,7 +59,7 @@ parts:
       - -DBUILD_LLVM_SUBMODULE=OFF
       - -DLLVM_DIR=$SNAPCRAFT_PART_BUILD/llvmlibs/lib/cmake/llvm/
       - -DUSE_PRECOMPILED_HEADERS=OFF
-      # - -DUSE_SYSTEM_CURL=ON
+      - -DUSE_SYSTEM_CURL=ON
     cmake-generator: Ninja
     override-pull: |
       snapcraftctl pull
@@ -93,6 +93,7 @@ parts:
       - qt515xmlpatterns
       - qt515wayland
       - qt515svg
+      - libcurl4-openssl-dev
       - curl
     stage-packages:
       - libsdl2-2.0-0
@@ -113,6 +114,7 @@ parts:
       - qt515wayland
       - qt515svg
       - xdg-utils
+      - libcurl4
   alsa-lib:
     plugin: autotools
     source: https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.5.tar.bz2
