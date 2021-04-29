@@ -67,6 +67,8 @@ parts:
       COMM_COUNT="$(git rev-list --count HEAD)"
       snapcraftctl set-version "${COMM_TAG}-${COMM_COUNT}"
     override-build: |
+      sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
+      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
       curl -sLO https://github.com/RPCS3/llvm-mirror/releases/download/custom-build/llvmlibs-linux.tar.gz
       mkdir llvmlibs
       tar -xzf ./llvmlibs-linux.tar.gz -C llvmlibs
@@ -74,6 +76,8 @@ parts:
       sed -i 's|Icon=rpcs3|Icon=/usr/share/icons/hicolor/scalable/apps/rpcs3.svg|' $SNAPCRAFT_PART_INSTALL/usr/share/applications/rpcs3.desktop
     build-packages:
       - build-essential
+      - gcc-10
+      - g++-10
       - libasound2-dev
       - libpulse-dev
       - libopenal-dev
