@@ -61,7 +61,7 @@ jobs:
       - run:
           name: Snap build
           command: |
-            sudo snapcraft --use-lxd --enable-experimental-package-repositories
+            sudo snapcraft --use-lxd
       - run:
           name: Snap Test
           command: |
