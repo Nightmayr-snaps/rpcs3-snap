@@ -42,18 +42,26 @@ package-repositories:
   #   key-id: 03F5D621A3710FA95A93D89BAA8452080E383F7E
   #   url: https://packages.lunarg.com/vulkan/1.2.154
   - type: apt
+    ppa: ubuntu-toolchain-r/test
+  - type: apt
     ppa: beineri/opt-qt-5.15.2-focal
 parts:
   rpcs3:
     after:
       - alsa-lib
+      - sdl2
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: 309759b725bd23bcb30466d949a57f761969c3de
+    source-commit: 72680c7707d16baddf48001de750bfc3412d5917
     plugin: cmake
+    build-environment:
+      - CC: "gcc-11"
+      - CXX: "g++-11"
+      - LDFLAG: "-L$SNAPCRAFT_STAGE/usr/local/lib"
+      - LD_LIBRARY_PATH: SNAPCRAFT_STAGE/usr/local/lib:$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
     build-snaps:
       - cmake
     cmake-parameters:
-      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DCMAKE_BUILD_TYPE=Release
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DUSE_NATIVE_INSTRUCTIONS=OFF
       - -DBUILD_LLVM_SUBMODULE=OFF
@@ -67,17 +75,18 @@ parts:
       COMM_COUNT="$(git rev-list --count HEAD)"
       snapcraftctl set-version "${COMM_TAG}-${COMM_COUNT}"
     override-build: |
-      sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
-      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
       curl -sLO https://github.com/RPCS3/llvm-mirror/releases/download/custom-build/llvmlibs-linux.tar.gz
-      mkdir llvmlibs
+      [ -d llvmlibs ] || mkdir llvmlibs
       tar -xzf ./llvmlibs-linux.tar.gz -C llvmlibs
+      # Need to patch Qt for compatibility with GCC 11
+      # See https://codereview.qt-project.org/c/qt/qtbase/+/339417 and https://github.com/RPCS3/rpcs3/issues/10291
+      sed -i 's/ThreadEngineStarter<void>(ThreadEngine<void> \*_threadEngine)/ThreadEngineStarter(ThreadEngine<void> \*_threadEngine)/' /opt/qt515/include/QtConcurrent/qtconcurrentthreadengine.h
       snapcraftctl build
       sed -i 's|Icon=rpcs3|Icon=/usr/share/icons/hicolor/scalable/apps/rpcs3.svg|' $SNAPCRAFT_PART_INSTALL/usr/share/applications/rpcs3.desktop
     build-packages:
       - build-essential
-      - gcc-10
-      - g++-10
+      - gcc-11
+      - g++-11
       - libasound2-dev
       - libpulse-dev
       - libopenal-dev
@@ -88,7 +97,7 @@ parts:
       - libudev-dev
       - git
       - libevdev-dev
-      - libsdl2-dev
+      # - libsdl2-dev
       # - vulkan-sdk
       # - vulkan-utils
       # - vulkan-tools
@@ -99,8 +108,9 @@ parts:
       - qt515svg
       - libcurl4-openssl-dev
       - curl
+      - libusb-1.0-0-dev
     stage-packages:
-      - libsdl2-2.0-0
+      # - libsdl2-2.0-0
       - qt5-gtk-platformtheme
       - libvulkan1
       - mesa-vulkan-drivers
@@ -119,6 +129,7 @@ parts:
       - qt515svg
       - xdg-utils
       - libcurl4
+      - libusb-1.0-0
   alsa-lib:
     plugin: autotools
     source: https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.5.tar.bz2
@@ -168,6 +179,7 @@ parts:
           - appmenu-qt5
       - locales-all
       - xdg-user-dirs
+      - libglib2.0-0
     override-prime: |
       snapcraftctl prime
       sed -i 's|XDG_DATA_HOME=$SNAP_USER_DATA|XDG_DATA_HOME=$SNAP_USER_COMMON|' $SNAPCRAFT_PRIME/bin/desktop-launch
@@ -188,6 +200,31 @@ parts:
     source-type: local
     organize:
       '*': bin/
+  sdl2:
+    source: https://www.libsdl.org/release/SDL2-2.0.14.tar.gz
+    plugin: cmake
+    cmake-generator: Ninja
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DCMAKE_C_COMPILER=gcc-10
+      - -DCMAKE_CXX_COMPILER=g++-10
+      - -DSDL_DLOPEN=ON
+      - -DARTS=OFF
+      - -DESD=OFF
+      - -DNAS=OFF
+      - -DALSA=ON
+      - -DPULSEAUDIO_SHARED=ON
+      - -DRPATH=OFF
+      - -DCLOCK_GETTIME=ON
+    build-packages:
+      - build-essential
+      - gcc-10
+      - g++-10
+  libstdc++:
+    plugin: nil
+    stage-packages:
+      - libstdc++6
 plugs:
   gtk-3-themes:
     interface: content
