@@ -158,7 +158,10 @@ workflows:
   
   build:
     jobs:
+      - versioning
       - build:
+          requires:
+            - "versioning"
           filters:
             branches:
               ignore: master
