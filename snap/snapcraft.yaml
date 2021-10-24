@@ -106,6 +106,7 @@ parts:
       - qt515xmlpatterns
       - qt515wayland
       - qt515svg
+      - qt515multimedia
       - libcurl4-openssl-dev
       - curl
       - libusb-1.0-0-dev
@@ -127,6 +128,7 @@ parts:
       - qt515xmlpatterns
       - qt515wayland
       - qt515svg
+      - qt515multimedia
       - xdg-utils
       - libcurl4
       - libusb-1.0-0
