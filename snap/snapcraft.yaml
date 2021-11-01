@@ -256,7 +256,7 @@ apps:
     command: usr/bin/rpcs3
     command-chain:
       - "bin/desktop-launch"
-      - "bin/vulkan-icd-files"
+      - "bin/rpcs3-launch"
     desktop: usr/share/applications/rpcs3.desktop
     environment:
       HOME: "$SNAP_USER_COMMON"
