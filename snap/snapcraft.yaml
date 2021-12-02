@@ -112,6 +112,8 @@ parts:
       - curl
       - libusb-1.0-0-dev
       - libxext-dev
+      - libwayland-dev
+      - libwayland-egl1-mesa
     stage-packages:
       - libvulkan1
       - mesa-vulkan-drivers
@@ -229,7 +231,6 @@ apps:
     environment:
       HOME: "$SNAP_USER_COMMON"
       LD_LIBRARY_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
-      DISABLE_WAYLAND: 1
       ALSOFT_CONF: $SNAP/etc/openal/alsoft.conf
       ALSA_CONFIG_PATH: /snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa/alsa.conf
     plugs:

@@ -61,7 +61,7 @@ jobs:
           name: Snap Test
           command: |
             sudo snap install *.snap --dangerous
-            snap connect rpcs3-emu:nightmayr-kf5-qt-5-15-2-core20 nightmayr-kf5-qt-5-15-2-core20
+            sudo snap connect rpcs3-emu:nightmayr-kf5-qt-5-15-2-core20 nightmayr-kf5-qt-5-15-2-core20
             snap run rpcs3-emu.rpcs3 --version
       - persist_to_workspace:
             root: ./
