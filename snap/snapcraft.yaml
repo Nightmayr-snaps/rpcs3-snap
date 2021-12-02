@@ -32,6 +32,7 @@ license: GPL-2.0
 icon: snap/gui/rpcs3.png
 grade: stable
 confinement: strict
+compression: lzo
 architectures:
   - build-on: amd64
 package-repositories:
@@ -51,7 +52,7 @@ parts:
       - alsa-lib
       - sdl2
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: 7dc3a50ddfd79d2f24322d5b30c094d709c4b0f9
+    source-commit: f16949c2928714537e18e4589f9ec0493d3f729b
     plugin: cmake
     build-environment:
       - CC: "gcc-11"
@@ -110,9 +111,10 @@ parts:
       - libcurl4-openssl-dev
       - curl
       - libusb-1.0-0-dev
+      - libxext-dev
+      - libwayland-dev
+      - libwayland-egl1-mesa
     stage-packages:
-      # - libsdl2-2.0-0
-      - qt5-gtk-platformtheme
       - libvulkan1
       - mesa-vulkan-drivers
       - libpulse0
@@ -123,15 +125,10 @@ parts:
       - libatomic1
       - libopenal1
       - libsndio7.0
-      - qt515base
-      - qt515declarative
-      - qt515xmlpatterns
-      - qt515wayland
-      - qt515svg
-      - qt515multimedia
       - xdg-utils
       - libcurl4
       - libusb-1.0-0
+      - libevdev2
   alsa-lib:
     plugin: autotools
     source: https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.5.tar.bz2
@@ -154,48 +151,6 @@ parts:
       - -usr/share/alsa/alsa.conf
       - -usr/share/alsa/pcm
       - -usr/share/alsa/topology/broadwell
-  desktop-qt5:
-    build-packages:
-      - build-essential
-      - qtbase5-dev
-      - dpkg-dev
-    make-parameters:
-      - FLAVOR=qt5
-    plugin: make
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-subdir: qt
-    stage-packages:
-      - libxkbcommon0
-      - ttf-ubuntu-font-family
-      - dmz-cursor-theme
-      - light-themes
-      - adwaita-icon-theme
-      - gnome-themes-standard
-      - shared-mime-info
-      - libgtk2.0-0
-      - libgdk-pixbuf2.0-0
-      - libgpm2
-      - freeglut3
-      - libslang2
-      - try:
-          - appmenu-qt5
-      - locales-all
-      - xdg-user-dirs
-      - libglib2.0-0
-    override-prime: |
-      snapcraftctl prime
-      sed -i 's|XDG_DATA_HOME=$SNAP_USER_DATA|XDG_DATA_HOME=$SNAP_USER_COMMON|' $SNAPCRAFT_PRIME/bin/desktop-launch
-      sed -i 's|XDG_CONFIG_HOME=$SNAP_USER_DATA|XDG_CONFIG_HOME=$SNAP_USER_COMMON|' $SNAPCRAFT_PRIME/bin/desktop-launch
-    stage:
-      - -usr/share/doc
-  plasma-integration:
-    plugin: nil
-    stage-packages:
-      - breeze-icon-theme
-      - kde-style-breeze
-      - plasma-integration
-    stage:
-      - -usr/share/doc
   launchers:
     plugin: dump
     source: snap/local/launchers
@@ -227,19 +182,34 @@ parts:
     plugin: nil
     stage-packages:
       - libstdc++6
-plugs:
-  gtk-3-themes:
-    interface: content
-    target: $SNAP/data-dir/themes
-    default-provider: gtk-common-themes
-  icon-themes:
-    interface: content
-    target: $SNAP/data-dir/icons
-    default-provider: gtk-common-themes
-  sound-themes:
-    interface: content
-    target: $SNAP/data-dir/sounds
-    default-provider: gtk-common-themes
+  kde-neon-extension:
+    build-packages:
+    - g++
+    build-snaps:
+    - kde-frameworks-5-qt-5-15-3-core20-sdk/latest/candidate
+    make-parameters:
+    - PLATFORM_PLUG=nightmayr-kf5-qt-5-15-2-core20
+    plugin: make
+    source: $SNAPCRAFT_EXTENSIONS_DIR/desktop
+    source-subdir: kde-neon
+    override-prime: |
+      snapcraftctl prime
+      sed -i 's|XDG_DATA_HOME="$SNAP_USER_DATA|XDG_DATA_HOME="$SNAP_USER_COMMON|' $SNAPCRAFT_PRIME/snap/command-chain/desktop-launch
+      sed -i 's|XDG_CONFIG_HOME="$SNAP_USER_DATA|XDG_CONFIG_HOME="$SNAP_USER_COMMON|' $SNAPCRAFT_PRIME/snap/command-chain/desktop-launch
+  cleanup:
+    after:
+    - kde-neon-extension
+    - rpcs3
+    - launchers
+    plugin: nil
+    build-snaps:
+    - core20
+    - nightmayr-kf5-qt-5-15-2-core20
+    override-prime: |
+      set -eux
+      for snap in "core20" "nightmayr-kf5-qt-5-15-2-core20"; do  # List all content-snaps and base snaps you're using here
+        cd "/snap/$snap/current" && find . -type f,l -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+      done
 layout:
   /usr/share/vulkan:
     symlink: $SNAP/usr/share/vulkan
@@ -255,18 +225,14 @@ apps:
   rpcs3:
     command: usr/bin/rpcs3
     command-chain:
-      - "bin/desktop-launch"
+      - "snap/command-chain/desktop-launch"
       - "bin/rpcs3-launch"
     desktop: usr/share/applications/rpcs3.desktop
     environment:
       HOME: "$SNAP_USER_COMMON"
-      QT_DIR: $SNAP/opt/qt515
-      LD_LIBRARY_PATH: "$SNAP/opt/qt515/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
-      KDE_FORK_SLAVES: 1
-      DISABLE_WAYLAND: 1
+      LD_LIBRARY_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
       ALSOFT_CONF: $SNAP/etc/openal/alsoft.conf
       ALSA_CONFIG_PATH: /snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa/alsa.conf
-      PATH: "$PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libexec/kf5:$SNAP/opt/qt515/bin"
     plugs:
       - desktop
       - desktop-legacy
@@ -288,3 +254,28 @@ apps:
       - browser-support
       - screen-inhibit-control
       - process-control
+assumes:
+- snapd2.43
+plugs:
+  desktop:
+    mount-host-font-cache: false
+  icon-themes:
+    default-provider: gtk-common-themes
+    interface: content
+    target: $SNAP/data-dir/icons
+  nightmayr-kf5-qt-5-15-2-core20:
+    default-provider: nightmayr-kf5-qt-5-15-2-core20
+    interface: content
+    target: $SNAP/kf5
+  sound-themes:
+    default-provider: gtk-common-themes
+    interface: content
+    target: $SNAP/data-dir/sounds
+environment:
+  SNAP_DESKTOP_RUNTIME: $SNAP/kf5
+hooks:
+  configure:
+    command-chain:
+    - snap/command-chain/hooks-configure-desktop
+    plugs:
+    - desktop
