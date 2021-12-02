@@ -15,24 +15,19 @@ jobs:
       - run: 
           name: Version check
           command: |
-            LATEST_VERSION_TAG="$(curl https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest -s | jq .tag_name -r)"
-            CURRENT_VERSION_SNAP="$(snap info rpcs3-emu | grep edge | head -n 2 | tail -n 1 | awk -F ' ' '{print $2}')"
-            LATEST_VERSION_COMMIT=${LATEST_VERSION_TAG#build-}
-            LATEST_APPIMAGE="$(curl https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest -s | jq .assets[].name -r)"
-            LATEST_VERSION_TEMP=${LATEST_APPIMAGE#rpcs3-v}
-            LATEST_VERSION=${LATEST_VERSION_TEMP%-*}
+            # Check if commit SHA matches
+            LATEST_VERSION_COMMIT="$(curl https://api.github.com/repos/RPCS3/rpcs3/commits/master -s | jq .sha -r)"
+            CURRENT_VERSION_COMMIT="$(yq e '.parts.rpcs3.source-commit' snap/snapcraft.yaml)"
 
             # compare versions
-            if [ $CURRENT_VERSION_SNAP != $LATEST_VERSION ]; then
-                echo "versions don't match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
+            if [ $CURRENT_VERSION_COMMIT != $LATEST_VERSION_COMMIT ]; then
+                echo "commits don't match, github: $LATEST_VERSION_COMMIT snap: $CURRENT_VERSION_COMMIT"
                 echo "updating rpcs3 source commit"
                 yq eval ".parts.rpcs3.source-commit = \"$LATEST_VERSION_COMMIT\"" -i snap/snapcraft.yaml
                 echo 'export BUILD="true"' >> $BASH_ENV
-                echo "export LATEST_VERSION=$LATEST_VERSION" >> $BASH_ENV
                 echo "export LATEST_VERSION_COMMIT=$LATEST_VERSION_COMMIT" >> $BASH_ENV
-                echo "export CURRENT_VERSION_SNAP=$CURRENT_VERSION_SNAP" >> $BASH_ENV
             else
-                echo "versions match, github: $LATEST_VERSION snap: $CURRENT_VERSION_SNAP"
+                echo "commits match, github: $LATEST_VERSION_COMMIT snap: $CURRENT_VERSION_COMMIT"
                 echo 'export BUILD="false"' >> $BASH_ENV
                 echo 'export BUILD="false"' >> build
             fi
