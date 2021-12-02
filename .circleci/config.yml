@@ -61,15 +61,14 @@ jobs:
           name: Snap Test
           command: |
             sudo snap install *.snap --dangerous
+            snap connect rpcs3-emu:nightmayr-kf5-qt-5-15-2-core20 nightmayr-kf5-qt-5-15-2-core20
             snap run rpcs3-emu.rpcs3 --version
       - persist_to_workspace:
             root: ./
             paths:
                 - "./"
-      # - run:
-      #     name:
-      # - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
-      #     path: "*.snap"
+      - store_artifacts: # See circleci.com/docs/2.0/artifacts/ for more details.
+          path: "*.snap"
   publish:
     machine:
       image: ubuntu-2004:202010-01
