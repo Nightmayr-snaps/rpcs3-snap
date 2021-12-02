@@ -52,7 +52,7 @@ parts:
       - alsa-lib
       - sdl2
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: f16949c2928714537e18e4589f9ec0493d3f729b
+    source-commit: 02832d9623c1e389bbbd20ee7f27aadf2421c5d7
     plugin: cmake
     build-environment:
       - CC: "gcc-11"
@@ -184,11 +184,11 @@ parts:
       - libstdc++6
   kde-neon-extension:
     build-packages:
-    - g++
+      - g++
     build-snaps:
-    - kde-frameworks-5-qt-5-15-3-core20-sdk/latest/candidate
+      - kde-frameworks-5-qt-5-15-3-core20-sdk/latest/candidate
     make-parameters:
-    - PLATFORM_PLUG=nightmayr-kf5-qt-5-15-2-core20
+      - PLATFORM_PLUG=nightmayr-kf5-qt-5-15-2-core20
     plugin: make
     source: $SNAPCRAFT_EXTENSIONS_DIR/desktop
     source-subdir: kde-neon
@@ -198,13 +198,13 @@ parts:
       sed -i 's|XDG_CONFIG_HOME="$SNAP_USER_DATA|XDG_CONFIG_HOME="$SNAP_USER_COMMON|' $SNAPCRAFT_PRIME/snap/command-chain/desktop-launch
   cleanup:
     after:
-    - kde-neon-extension
-    - rpcs3
-    - launchers
+      - kde-neon-extension
+      - rpcs3
+      - launchers
     plugin: nil
     build-snaps:
-    - core20
-    - nightmayr-kf5-qt-5-15-2-core20
+      - core20
+      - nightmayr-kf5-qt-5-15-2-core20
     override-prime: |
       set -eux
       for snap in "core20" "nightmayr-kf5-qt-5-15-2-core20"; do  # List all content-snaps and base snaps you're using here
@@ -255,7 +255,7 @@ apps:
       - screen-inhibit-control
       - process-control
 assumes:
-- snapd2.43
+  - snapd2.43
 plugs:
   desktop:
     mount-host-font-cache: false
@@ -276,6 +276,6 @@ environment:
 hooks:
   configure:
     command-chain:
-    - snap/command-chain/hooks-configure-desktop
+      - snap/command-chain/hooks-configure-desktop
     plugs:
-    - desktop
+      - desktop
