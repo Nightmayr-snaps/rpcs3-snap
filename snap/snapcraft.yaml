@@ -221,6 +221,8 @@ layout:
     bind-file: $SNAP/etc/openal/alsoft.conf
   /usr/share/alsa/alsa.conf:
     symlink: $SNAP/usr/share/alsa/alsa.conf
+  /usr/share/libdrm:
+    symlink: $SNAP/kf5/usr/share/libdrm
 apps:
   rpcs3:
     command: usr/bin/rpcs3
