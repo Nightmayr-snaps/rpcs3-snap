@@ -29,7 +29,7 @@ description: |
   **Please report any bugs/issues with this snap here:**
   https://github.com/Nightmayr-snaps/rpcs3-snap/issues
 license: GPL-2.0
-icon: snap/gui/rpcs3.png
+# icon: snap/gui/rpcs3.png
 grade: stable
 confinement: strict
 compression: lzo
