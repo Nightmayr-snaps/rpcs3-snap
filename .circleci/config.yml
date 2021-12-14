@@ -55,6 +55,7 @@ jobs:
             fi
       - run:
           name: Snap build
+          no_output_timeout: 1.5h
           command: |
             sudo snapcraft --use-lxd
       - run:
