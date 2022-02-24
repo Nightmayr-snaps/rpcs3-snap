@@ -47,12 +47,40 @@ package-repositories:
   - type: apt
     ppa: beineri/opt-qt-5.15.2-focal
 parts:
+  vulkan-headers:
+    source: https://github.com/KhronosGroup/Vulkan-Headers.git
+    source-tag: sdk-1.3.204.0
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    override-build: |
+      snapcraftctl build
+      rsync -a --ignore-existing $SNAPCRAFT_PART_INSTALL/ /
+    build-packages:
+      - rsync
+  vulkan-loader:
+    after:
+      - vulkan-headers
+    source: https://github.com/KhronosGroup/Vulkan-Loader.git
+    source-tag: sdk-1.3.204.0
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DCMAKE_INSTALL_LIBDIR=/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
+      - -DVULKAN_HEADERS_INSTALL_DIR=$SNAPCRAFT_STAGE/usr
+    override-build: |
+      snapcraftctl build
+      rsync -a --ignore-existing $SNAPCRAFT_PART_INSTALL/ /
+    build-packages:
+      - libxrandr-dev
   rpcs3:
     after:
+      - vulkan-headers
+      - vulkan-loader
       - alsa-lib
       - sdl2
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: 7895d43a98f93241624d347fb744489d30e55de8
+    source-commit: 574e934bf3a1817be54a6ab67cb35fbd03fb9f25
     plugin: cmake
     build-environment:
       - CC: "gcc-11"
@@ -94,14 +122,9 @@ parts:
       - libglew-dev
       - zlib1g-dev
       - libedit-dev
-      - libvulkan-dev
       - libudev-dev
       - git
       - libevdev-dev
-      # - libsdl2-dev
-      # - vulkan-sdk
-      # - vulkan-utils
-      # - vulkan-tools
       - qt515base
       - qt515declarative
       - qt515xmlpatterns
@@ -115,7 +138,6 @@ parts:
       - libwayland-dev
       - libwayland-egl1-mesa
     stage-packages:
-      - libvulkan1
       - mesa-vulkan-drivers
       - libpulse0
       - libgl1-mesa-glx
@@ -129,6 +151,8 @@ parts:
       - libcurl4
       - libusb-1.0-0
       - libevdev2
+    stage:
+      - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan.so.1
   alsa-lib:
     plugin: autotools
     source: https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.5.tar.bz2
@@ -207,8 +231,18 @@ parts:
       - nightmayr-kf5-qt-5-15-2-core20
     override-prime: |
       set -eux
+      exceptions=(
+        "./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan.so.1"
+        "./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan.so.1.3.204"
+        "./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libstdc++.so.6"
+      )
       for snap in "core20" "nightmayr-kf5-qt-5-15-2-core20"; do  # List all content-snaps and base snaps you're using here
         cd "/snap/$snap/current" && find . -type f,l -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+      done
+      # restore exceptions from SNAPCRAFT_STAGE
+      for e in ${exceptions[@]}; do
+        epath=${e%/*}
+        rsync -a --ignore-existing $SNAPCRAFT_STAGE/$e $SNAPCRAFT_PRIME/$epath
       done
 layout:
   /usr/share/vulkan:
