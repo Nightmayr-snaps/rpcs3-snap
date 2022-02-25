@@ -80,7 +80,7 @@ parts:
       - alsa-lib
       - sdl2
     source: https://github.com/RPCS3/rpcs3.git
-    source-commit: 86a04a867bfbeeaa75000447ebfacaedc9b5a717
+    source-commit: 6db5d83615e2e4ce7839c6dc9e25ed46ab428e35
     plugin: cmake
     build-environment:
       - CC: "gcc-11"
